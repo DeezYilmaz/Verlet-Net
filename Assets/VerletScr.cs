@@ -30,6 +30,7 @@ public class VerletScr : MonoBehaviour
                 spheres[n, m].transform.localScale = Vector3.one * 0.1f;
                RopePoint rp = new RopePoint(new Vector3(n, m, 0f),false);
                 ropeGrid[n,m] = rp;
+                
 
             }
         }
