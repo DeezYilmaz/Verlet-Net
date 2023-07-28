@@ -11,6 +11,8 @@ public class NetManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+
         GameObject go=Instantiate(netPointPrefab);
         NetPoint np = go.GetComponent<NetPoint>();
         np.setValues(Vector3.one, true);
