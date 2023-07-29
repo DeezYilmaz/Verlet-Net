@@ -16,7 +16,6 @@ public class NetPoint : MonoBehaviour
     public Vector3 firstPos;
     public List<NetPoint> neighbours;
 
-   
     public void setValues(Vector3 pos, bool anchor)
     {
         firstPos = pos;
@@ -39,7 +38,13 @@ public class NetPoint : MonoBehaviour
         {
             float dist = Vector3.Distance(second.currPos, this.currPos);
             float error = Mathf.Abs(dist - maxRopeLimit);
-            if (dist > maxRopeLimit)
+            if (dist > maxRopeLimit * NetManager.netStrength && NetManager.canBeRipped)
+            {
+                second.neighbours.Remove(this);
+                neighbours.Remove(second);
+                return;
+            }
+                if (dist > maxRopeLimit)
             {
                 Vector3 distVector = (second.currPos - this.currPos).normalized;
                 second.currPos -= distVector * (error * 0.5f);
@@ -61,6 +66,11 @@ public class NetPoint : MonoBehaviour
         pointLine.endWidth = lineWidth;
 
 
+        if (neighbours.Count < 1)
+        {
+            pointLine.enabled = false;
+            return;
+        }
 
         Vector3[] horizontalRopePositions = new Vector3[2*neighbours.Count-1];
 

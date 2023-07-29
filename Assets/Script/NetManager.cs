@@ -18,6 +18,9 @@ public class NetManager : MonoBehaviour
 
 
     List<NetPoint> pointList = new List<NetPoint>();
+    public static float netStrength=1.5f;
+    public static bool canBeRipped=false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,7 +30,7 @@ public class NetManager : MonoBehaviour
         {
             for (int n = 0; n < x; n++)
             {
-                GameObject go = Instantiate(netPointPrefab);
+                GameObject go = Instantiate(netPointPrefab,transform);
                 NetPoint np = go.GetComponent<NetPoint>();
                 np.setValues(new Vector3(n* maxRopeLimit, m* maxRopeLimit, 0), false);
                 ropeGrid[n, m] = np;
