@@ -20,10 +20,12 @@ public class NetManager : MonoBehaviour
     List<NetPoint> pointList = new List<NetPoint>();
     public static float netStrength=1.5f;
     public static bool canBeRipped=false;
+    MeshFilter mf;
 
     // Start is called before the first frame update
     void Start()
     {
+        mf = GetComponent<MeshFilter>();
         ropeGrid = new NetPoint[x, y];
 
         for (int m = 0; m < y; m++)
@@ -53,17 +55,74 @@ public class NetManager : MonoBehaviour
             ropeGrid[i, y - 1].anchor = true;
         }
 
-
+        generateMesh();
     }
+
+    public bool drawLine, drawPoint, drawMesh;
 
     private void FixedUpdate()
     {
         Simulate();
         ApplyConstraint();
-        DrawLine();
-        DrawPoint();
+        if(drawLine) DrawLine();
+        DrawPoint(drawPoint);
+        if (drawMesh) DrawMesh();
     }
+    void generateMesh()
+    {
 
+        Mesh mesh = new Mesh();
+
+        Vector3[] verts = new Vector3[x * y];
+        int[] tri = new int[(x - 1) * (y - 1) * 6];
+
+        int k = 0;
+        int f = 0;
+        for (int m = 0; m < y; m++)
+        {
+            for (int n = 0; n < x; n++)
+            {
+                verts[k] = ropeGrid[m,n].currPos;
+
+                if(m<y-1 && n < x - 1)
+                {
+                    tri[6*f] = k;
+                    tri[6*f + 1] = k + 1 + x;
+                    tri[6*f + 2] = k + x;
+
+                    tri[6*f + 3] = k;
+                    tri[6*f + 4] = k + 1;
+                    tri[6*f + 5] = k + x + 1;
+                    f++;     
+                }
+                k++;
+            }
+        }
+
+        mesh.vertices = verts;
+        mesh.triangles = tri;
+
+        mf.mesh = mesh;
+
+    }
+    void DrawMesh()
+    {
+        Mesh msh = mf.mesh;
+        int k = 0;
+
+        Vector3[] verts = new Vector3[x * y];
+        for (int m = 0; m < y; m++)
+        {
+            for (int n = 0; n < x; n++)
+            {
+                verts[k] = pointList[k].currPos;
+                k++;
+            }
+        }
+        msh.vertices = verts;
+        mf.mesh = msh;
+        
+    }
     void DrawLine()
     {
         foreach (NetPoint item in pointList)
@@ -71,10 +130,15 @@ public class NetManager : MonoBehaviour
             item.DrawLine();
         }
     }
-    void DrawPoint()
+
+    Dictionary<NetPoint,MeshRenderer> meshRendererDict= new Dictionary<NetPoint,MeshRenderer>();
+    void DrawPoint(bool drawPoint)
     {
         foreach (NetPoint item in pointList)
         {
+            if (!meshRendererDict.ContainsKey(item))
+                meshRendererDict.Add(item, item.GetComponent<MeshRenderer>());
+            meshRendererDict[item].enabled = drawPoint;
             item.transform.position = item.currPos;
         }
     }

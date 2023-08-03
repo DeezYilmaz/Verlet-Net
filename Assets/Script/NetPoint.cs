@@ -16,6 +16,7 @@ public class NetPoint : MonoBehaviour
     public Vector3 firstPos;
     public List<NetPoint> neighbours;
 
+
     public void setValues(Vector3 pos, bool anchor)
     {
         firstPos = pos;
