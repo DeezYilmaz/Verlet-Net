@@ -12,6 +12,7 @@ public class NetManager : MonoBehaviour
     public int y = 10;
 
     public float maxRopeLimit = 1.0f;
+    public float minRopeLimit = .2f;
     public Vector3 additForce = Vector3.zero;
 
     NetPoint[,] ropeGrid;
@@ -93,6 +94,7 @@ public class NetManager : MonoBehaviour
                     tri[6*f + 3] = k;
                     tri[6*f + 4] = k + 1;
                     tri[6*f + 5] = k + x + 1;
+
                     f++;     
                 }
                 k++;
@@ -120,6 +122,7 @@ public class NetManager : MonoBehaviour
             }
         }
         msh.vertices = verts;
+        msh.RecalculateNormals();
         mf.mesh = msh;
         
     }
@@ -154,7 +157,7 @@ public class NetManager : MonoBehaviour
     {
         foreach (NetPoint item in pointList)
         {
-            item.ApplyConstraint(maxRopeLimit);
+            item.ApplyConstraint(maxRopeLimit,minRopeLimit);
         }
     }
 }

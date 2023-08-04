@@ -33,7 +33,7 @@ public class NetPoint : MonoBehaviour
         currPos += force*Time.fixedDeltaTime;
     }
 
-    internal void ApplyConstraint(float maxRopeLimit)
+    internal void ApplyConstraint(float maxRopeLimit,float minRopeLimit)
     {
         foreach (NetPoint second in neighbours)
         {
@@ -45,11 +45,18 @@ public class NetPoint : MonoBehaviour
                 neighbours.Remove(second);
                 return;
             }
-                if (dist > maxRopeLimit)
+            if (dist > maxRopeLimit)
             {
                 Vector3 distVector = (second.currPos - this.currPos).normalized;
                 second.currPos -= distVector * (error * 0.5f);
                 this.currPos += distVector * (error * 0.5f);
+
+            }
+            if (dist < minRopeLimit)
+            {
+                Vector3 distVector = (second.currPos - this.currPos).normalized;
+                second.currPos += distVector * (error * 0.5f);
+                this.currPos -= distVector * (error * 0.5f);
 
             }
             if (this.anchor)
